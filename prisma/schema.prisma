@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id         String     @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  title      String
+  status     String
+  tags       String[]
+  description String?
+  deadlineDate DateTime
+  lists      List[]
+  tasks      Task[]
+  createdBy  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities Activity[]
+  userId     String
+}
+
+model List {
+  id         String     @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  title      String
+  tasks      Task[]
+  status     String
+  inProject  Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities Activity[]
+  projectId  String
+  userId     String
+}
+
+model Task {
+  id              String       @id @default(cuid())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  title           String
+  description     String
+  tags            String[]
+  status          String
+  externalLinks   String[]
+  priority        String       @default("normal")
+  deadline        DateTime?
+  subscribedUsers Subscriber[]
+  inProject       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  inList          List         @relation(fields: [listId], references: [id], onDelete: Cascade)
+  createdBy       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities      Activity[]
+  projectId       String
+  listId          String
+  userId          String
+}
+
+model Subscriber {
+  id       String  @id @default(cuid())
+  name     String
+  surname  String
+  work     String?
+  email    String
+  password String
+  imageUrl String
+  Task     Task?   @relation(fields: [taskId], references: [id])
+  taskId   String?
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  title       String
+  description String
+  createdBy   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String?
+  List        List?    @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId      String?
+  Task        Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId      String?
+  userId      String
+}
+
+model User {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String
+  surname   String
+  city      String?
+  phone     String?
+  work      String?
+  email     String
+  password  String
+  imageUrl  String
+  Project   Project[]
+  List      List[]
+  Task      Task[]
+  Activity  Activity[]
+}
