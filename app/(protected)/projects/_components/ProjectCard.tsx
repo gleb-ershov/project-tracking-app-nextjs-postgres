@@ -59,7 +59,10 @@ export const ProjectCard = (props: IProjectCardProps) => {
 							</span>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent>
-							<Link href={`/projects/${id}`} className="w-full">
+							<Link
+								href={`/projects/${id}/info`}
+								className="w-full"
+							>
 								<DropdownMenuItem className="hover:cursor-pointer">
 									More
 								</DropdownMenuItem>
@@ -101,7 +104,6 @@ export const ProjectCard = (props: IProjectCardProps) => {
 						{tags[0]}
 					</Badge>
 				) : null}
-
 				<span className="text-sm flex items-center gap-2 text-gray-600">
 					Due date
 					<span className="font-semibold">
@@ -109,15 +111,17 @@ export const ProjectCard = (props: IProjectCardProps) => {
 					</span>
 				</span>
 			</div>
-			<Image
-				alt=""
-				placeholder="blur"
-				src={staticProjectImagePlaceholder}
-				width={270}
-				height={160}
-				className="mt-2"
-			/>
-			<h5 className="font-semibold mt-4 text-grayDark">{title}</h5>
+			<Link href={`/projects/${id}`}>
+				<Image
+					alt="project-image-placeholder"
+					placeholder="blur"
+					src={staticProjectImagePlaceholder}
+					width={270}
+					height={160}
+					className="mt-2"
+				/>
+				<h5 className="font-semibold mt-4 text-grayDark">{title}</h5>
+			</Link>
 		</div>
 	);
 };

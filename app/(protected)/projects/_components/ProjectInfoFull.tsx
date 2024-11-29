@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { statusColorCreator } from "@/utils/helpers/statusColorCreator";
 import { Activity, Project, User } from "@prisma/client";
 import { format } from "date-fns";
-import { Activity as ActivityIcon, Plus, Square } from "lucide-react";
+import { Plus, Square } from "lucide-react";
 import Image from "next/image";
 import { ProjectActivityCard } from "./ProjectActivityCard";
 
@@ -16,27 +16,19 @@ interface IProjectInfoProps extends Project {
 	activities: IProjectActivityWithUser[];
 }
 
-export const ProjectInfo = async (props: IProjectInfoProps) => {
-	const {
-		title,
-		createdBy,
-		deadlineDate,
-		status,
-		tags,
-		activities,
-		description,
-	} = props;
+export const ProjectInfoFull = async (props: IProjectInfoProps) => {
+	const { createdBy, deadlineDate, status, tags, activities, description } =
+		props;
 
 	const statusColor = statusColorCreator(status);
 
 	return (
-		<div className="flex flex-col flex-1 w-[90%] mx-auto mt-6">
-			<div className="flex flex-col gap-4">
-				<h3 className="text-2xl font-bold">{title}</h3>
+		<div className="flex w-[90%] mx-auto mt-6 justify-between">
+			<div className="flex flex-col w-1/2">
 				<div className="flex flex-col gap-4">
 					<div className="flex items-center gap-4">
 						<div className="flex items-center gap-1">
-							<span className="font-medium text-grayRegular">
+							<span className="font-medium text-grayRegular text-sm">
 								Created by
 							</span>
 							<div className="px-1.5 bg-sidebarL rounded-full py-0.5 flex items-center gap-1">
@@ -46,13 +38,13 @@ export const ProjectInfo = async (props: IProjectInfoProps) => {
 											createdBy.imageUrl ||
 											"/avatar-placeholder.png"
 										}
-										width={20}
-										height={20}
-										alt=""
+										width={28}
+										height={28}
+										alt={`${createdBy.name} profile picture`}
 										className="bg-background rounded-full"
 									/>
 								</span>
-								<span className="font-medium text-sm">
+								<span className="font-medium text-[15px]">
 									{`${createdBy.name} ${createdBy.surname}`}
 								</span>
 							</div>
@@ -62,19 +54,19 @@ export const ProjectInfo = async (props: IProjectInfoProps) => {
 						</div>
 					</div>
 					<div className="flex items-center gap-4">
-						<span className="font-medium text-grayRegular">
+						<span className="font-medium text-grayRegular text-sm">
 							Due date
 						</span>
-						<span className="py-0.5 px-2 font-semibold text-grayRegular bg-sidebarL rounded-md text-[12px] flex items-center gap-2">
+						<span className="py-0.5 px-2 font-semibold text-grayRegular bg-sidebarL rounded-md text-[15px] flex items-center gap-2">
 							{format(deadlineDate, "PPP")}
 						</span>
 					</div>
 					<div className="flex items-center gap-4">
-						<span className="font-medium text-grayRegular">
+						<span className="font-medium text-grayRegular text-sm">
 							Status
 						</span>
 						<Badge
-							className={`font-semibold text-${statusColor}-500 bg-sidebarL text-[12px] flex items-center gap-2`}
+							className={`font-semibold text-${statusColor}-500 bg-sidebarL text-[14px] flex items-center gap-2`}
 						>
 							<Square
 								className={`fill-${statusColor}-400`}
@@ -87,7 +79,7 @@ export const ProjectInfo = async (props: IProjectInfoProps) => {
 						</Badge>
 					</div>
 					<div className="flex items-center gap-4">
-						<span className="font-medium text-grayRegular">
+						<span className="font-medium text-grayRegular text-sm">
 							Tags
 						</span>
 						<div className="flex items-center gap-2 flex-wrap">
@@ -97,7 +89,7 @@ export const ProjectInfo = async (props: IProjectInfoProps) => {
 						</div>
 					</div>
 					<div className="flex items-center gap-4">
-						<span className="font-medium text-grayRegular">
+						<span className="font-medium text-grayRegular text-sm">
 							Assignees
 						</span>
 						<div className="px-1.5 bg-sidebarL rounded-full py-0.5 flex items-center gap-1">
@@ -107,9 +99,9 @@ export const ProjectInfo = async (props: IProjectInfoProps) => {
 										createdBy.imageUrl ||
 										"/avatar-placeholder.png"
 									}
-									width={20}
-									height={20}
-									alt=""
+									width={28}
+									height={28}
+									alt={`${createdBy.name} profile picture`}
 									className="bg-background rounded-full"
 								/>
 							</span>
@@ -120,7 +112,7 @@ export const ProjectInfo = async (props: IProjectInfoProps) => {
 					</div>
 				</div>
 			</div>
-			<Tabs defaultValue="description" className="w-full">
+			<Tabs defaultValue="description" className="flex flex-col w-1/2">
 				<TabsList className="w-full flex items-center bg-sidebarL">
 					<TabsTrigger value="description" className="w-1/2">
 						Description
@@ -129,22 +121,16 @@ export const ProjectInfo = async (props: IProjectInfoProps) => {
 						Activities
 					</TabsTrigger>
 				</TabsList>
-				<TabsContent value="description">
-					<div className="bg-sidebarL p-2">
+				<TabsContent value="description" className="flex-1">
+					<div className="bg-sidebarL p-2 rounded-lg">
 						<p className="text-justify leading-relaxed">
 							{description}
 						</p>
 					</div>
 				</TabsContent>
-				<TabsContent value="activities">
-					<div className="bg-sidebarL p-2">
-						<div className="flex items-center gap-4 py-2 border-b-2 border-gray-100">
-							<ActivityIcon color="gray" />
-							<span className="font-semibold text-gray-600">
-								Activities
-							</span>
-						</div>
-						<div className="mt-4 flex flex-col gap-4">
+				<TabsContent value="activities" className="flex-1">
+					<div className="bg-sidebarL p-2 rounded-lg">
+						<div className="flex flex-col gap-4 overflow-y-auto h-[150px]">
 							{activities.map((item) => (
 								<ProjectActivityCard {...item} key={item.id} />
 							))}

@@ -7,7 +7,9 @@ import { createError } from "../helpers/createError";
 export const getProjectById = async (
 	id: string,
 	incActivities?: boolean,
-	incUser?: boolean
+	incUser?: boolean,
+	incTasks?: boolean,
+	incLists?: boolean
 ) => {
 	const isAuthenticated = await checkAuth();
 
@@ -27,6 +29,8 @@ export const getProjectById = async (
 						createdBy: !!incActivities,
 					},
 				},
+				tasks: !!incTasks,
+				lists: !!incLists,
 			},
 		});
 

@@ -29,7 +29,6 @@ model List {
   updatedAt  DateTime   @updatedAt
   title      String
   tasks      Task[]
-  status     String
   inProject  Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdBy  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   activities Activity[]
@@ -50,11 +49,11 @@ model Task {
   deadline        DateTime?
   subscribedUsers Subscriber[]
   inProject       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  inList          List         @relation(fields: [listId], references: [id], onDelete: Cascade)
+  inList          List?         @relation(fields: [listId], references: [id], onDelete: Cascade)
   createdBy       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   activities      Activity[]
   projectId       String
-  listId          String
+  listId          String?
   userId          String
 }
 

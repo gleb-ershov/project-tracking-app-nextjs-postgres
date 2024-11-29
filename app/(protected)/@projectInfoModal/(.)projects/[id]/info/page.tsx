@@ -1,5 +1,5 @@
 import { Ellipsis, MoveDiagonal, Star } from "lucide-react";
-import { CloseModalButton } from "../../../../../components/common/CloseModalButton";
+import { CloseModalButton } from "../../../../../../components/common/CloseModalButton";
 import { getProjectById } from "@/utils/data-access/getProjectById";
 import { ProjectInfo } from "@/app/(protected)/projects/_components/ProjectInfo";
 
