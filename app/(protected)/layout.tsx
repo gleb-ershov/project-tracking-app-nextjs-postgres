@@ -8,12 +8,10 @@ import { getCurrentUser } from "@/utils/data-access/getCurrentUser";
 
 export default async function ProtectedRoutesLayout({
 	children,
-	projectInfoModal,
-	createProject,
+	projectsModal,
 }: {
 	children: ReactNode;
-	projectInfoModal: ReactNode;
-	createProject: ReactNode;
+	projectsModal: ReactNode;
 }) {
 	const currentUser = await getCurrentUser();
 
@@ -55,8 +53,7 @@ export default async function ProtectedRoutesLayout({
 						</div>
 						<main className="flex-1">
 							{children}
-							{projectInfoModal}
-							{createProject}
+							{projectsModal}
 						</main>
 					</div>
 				</div>

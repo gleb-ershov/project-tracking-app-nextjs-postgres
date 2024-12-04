@@ -7,6 +7,7 @@ import { createError } from "@/utils/helpers/createError";
 import { z } from "zod";
 import { required_error, invalid_type_error } from "../../consts";
 import { createActivityAction } from "../activities/createNewActivity";
+import { redirect } from "next/navigation";
 
 export const createNewList = async (
 	user: { id: string; name: string },
@@ -33,9 +34,9 @@ export const createNewList = async (
 	if (!zodResult.success) {
 		return createError(400, "Bad request", undefined, true);
 	}
-
+	let response;
 	try {
-		const response = await db.list.create({
+		response = await db.list.create({
 			data: { ...newList, projectId, userId: user.id },
 		});
 
@@ -56,5 +57,9 @@ export const createNewList = async (
 		};
 	} catch (error) {
 		return createError(500, "Internal Error", error, undefined);
+	} finally {
+		if (response?.id) {
+			redirect(`/projects/${projectId}`);
+		}
 	}
 };

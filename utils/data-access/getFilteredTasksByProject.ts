@@ -14,7 +14,6 @@ export const getFilteredTasksByProject = async (
 	if (!isAuthenticated.ok) {
 		return createError(401, "Not Authorized", undefined, true);
 	}
-	console.log(projectId, searchQuery, sortQuery);
 	try {
 		const response = await db.task.findMany({
 			where: {
@@ -35,6 +34,7 @@ export const getFilteredTasksByProject = async (
 				],
 				...(sortQuery && sortQuery !== "all" && { status: sortQuery }),
 			},
+			include: { createdBy: true },
 		});
 
 		return {

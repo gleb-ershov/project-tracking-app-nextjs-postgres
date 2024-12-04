@@ -2,7 +2,7 @@
 
 import { useCurrentUser } from "@/components/providers/AuthProvider";
 import { createNewProject } from "@/utils/actions/projects/createNewProject";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { cn } from "@/utils/lib/shadcnUtils";
@@ -59,6 +59,8 @@ export const CreateProjectForm = () => {
 			tags: [],
 		},
 	});
+
+	useEffect(() => console.log(state), [state]);
 
 	return (
 		<Form {...form}>
@@ -205,6 +207,7 @@ export const CreateProjectForm = () => {
 						</FormItem>
 					)}
 				/>
+				{isPending && <span>asdasdas</span>}
 				<Button type="submit" disabled={isPending}>
 					Create project
 				</Button>

@@ -3,13 +3,11 @@
 import { db } from "@/prisma/db";
 import { checkAuth } from "../actions/auth/checkAuth";
 import { createError } from "../helpers/createError";
+import { TGetProjectByIdOptions } from "../types";
 
 export const getProjectById = async (
 	id: string,
-	incActivities?: boolean,
-	incUser?: boolean,
-	incTasks?: boolean,
-	incLists?: boolean
+	options: TGetProjectByIdOptions
 ) => {
 	const isAuthenticated = await checkAuth();
 
@@ -17,6 +15,7 @@ export const getProjectById = async (
 		return createError(401, "Not Authorized", undefined, true);
 	}
 
+	const { incUser, incActivities, incLists, incTasks } = options;
 	try {
 		const response = await db.project.findMany({
 			where: {

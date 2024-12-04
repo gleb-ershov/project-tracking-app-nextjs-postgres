@@ -7,6 +7,7 @@ import { OverviewSelectBlock } from "../_components/OverviewSelectBlock";
 import { PlusSquare } from "lucide-react";
 import { ProjectItemsList } from "./_components/ProjectItemsList";
 import { Carousel } from "@/components/common/Carousel";
+import { Suspense } from "react";
 
 export default async function ProjectInfoPage({
 	params,
@@ -21,7 +22,12 @@ export default async function ProjectInfoPage({
 }) {
 	const dynamicParams = await params;
 	const projectId = dynamicParams.id;
-	const projectContent = await getProjectById(projectId, true, true);
+
+	const projectContent = await getProjectById(projectId, {
+		incActivities: true,
+		incUser: true,
+	});
+
 	const searchPar = await searchParams;
 	const display = searchPar?.display || "flex";
 	const search = searchPar?.search || "";
@@ -30,7 +36,11 @@ export default async function ProjectInfoPage({
 	if ("data" in projectContent) {
 		const currentProject = projectContent.data[0];
 
-		const projectInfo = <ProjectInfoFull {...currentProject} />;
+		const projectInfo = (
+			<Suspense fallback="loading">
+				<ProjectInfoFull {...currentProject} />
+			</Suspense>
+		);
 
 		const projectBoard = (
 			<>
@@ -47,12 +57,14 @@ export default async function ProjectInfoPage({
 					</Link>
 				</div>
 				<TasksFilters />
-				<ProjectItemsList
-					projectId={projectId}
-					sort={sort}
-					display={display}
-					search={search}
-				/>
+				<Suspense fallback="loading">
+					<ProjectItemsList
+						projectId={projectId}
+						sort={sort}
+						display={display}
+						search={search}
+					/>
+				</Suspense>
 			</>
 		);
 

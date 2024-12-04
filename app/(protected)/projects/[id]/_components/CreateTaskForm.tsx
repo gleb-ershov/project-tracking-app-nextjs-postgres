@@ -2,8 +2,8 @@
 
 import { useCurrentUser } from "@/components/providers/AuthProvider";
 import { createNewTaskAction } from "@/utils/actions/tasks/createNewTask";
-import { useSearchParams } from "next/navigation";
-import { useActionState, useEffect } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import { ChangeEvent, useActionState } from "react";
 
 import { cn } from "@/utils/lib/shadcnUtils";
 import { Button } from "@/components/ui/button";
@@ -34,15 +34,25 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
+import { ControllerRenderProps, useForm } from "react-hook-form";
 import { useCreateTask } from "@/hooks/useCreateTask";
 
-export const CreateTaskForm = ({ projectId }: { projectId: string }) => {
+interface ICreateTaskFormValues {
+	title: string;
+	description: string;
+	status: string;
+	deadline: Date;
+	tags: never[];
+	priority: string;
+	listId: string;
+}
+
+export const CreateTaskForm = () => {
 	const { currentUser } = useCurrentUser();
 	const searchParams = useSearchParams();
 	const listId = searchParams.get("listId");
-	useEffect(() => console.log(listId), [listId]);
 	const { state: createTaskState, dispatch } = useCreateTask();
+	const { id: projectId } = useParams<{ id: string }>();
 
 	const [state, action, isPending] = useActionState(
 		createNewTaskAction.bind(
@@ -70,6 +80,55 @@ export const CreateTaskForm = ({ projectId }: { projectId: string }) => {
 			listId: listId || "",
 		},
 	});
+
+	const createInputHandler = () => {
+		dispatch({
+			type: "add_externalLinkInput",
+		});
+	};
+
+	const setDeadlineValueHandler = (
+		field: ControllerRenderProps<ICreateTaskFormValues>,
+		val: Date
+	) => {
+		field.onChange(val);
+		dispatch({
+			type: "add_deadlineDate",
+			payload: val,
+		});
+	};
+
+	const deleteInputHandler = (index: number) => {
+		const newState = [...createTaskState.linksInputs];
+		newState.splice(index, 1);
+		dispatch({
+			type: "delete_externalLink",
+			payload: newState,
+		});
+	};
+
+	const createTagHandler = (
+		field: ControllerRenderProps<ICreateTaskFormValues>,
+		val: string[]
+	) => {
+		field.onChange(val);
+		dispatch({
+			type: "add_tag",
+			payload: val,
+		});
+	};
+
+	const changeLinkInputValue = (
+		e: ChangeEvent<HTMLInputElement>,
+		index: number
+	) => {
+		const prevValue = [...createTaskState.linksInputs];
+		prevValue[index].value = e.currentTarget.value;
+		dispatch({
+			type: "add_externalLinkValue",
+			payload: prevValue,
+		});
+	};
 
 	return (
 		<Form {...form}>
@@ -111,8 +170,10 @@ export const CreateTaskForm = ({ projectId }: { projectId: string }) => {
 												variant={"outline"}
 												className={cn(
 													"w-[240px] pl-3 text-left font-normal",
-													!field.value &&
-														"text-muted-foreground"
+													{
+														"text-muted-foreground":
+															!field.value,
+													}
 												)}
 											>
 												{field.value ? (
@@ -131,16 +192,12 @@ export const CreateTaskForm = ({ projectId }: { projectId: string }) => {
 										<Calendar
 											mode="single"
 											selected={field.value}
-											onSelect={(
-												undefined,
-												val: Date
-											) => {
-												field.onChange(val);
-												dispatch({
-													type: "add_deadlineDate",
-													payload: val,
-												});
-											}}
+											onSelect={(undefined, val: Date) =>
+												setDeadlineValueHandler(
+													field,
+													val
+												)
+											}
 											initialFocus
 										/>
 									</PopoverContent>
@@ -179,13 +236,9 @@ export const CreateTaskForm = ({ projectId }: { projectId: string }) => {
 								<TagsInput
 									minItems={0}
 									value={field.value ? field.value : []}
-									onValueChange={(val: string[]) => {
-										field.onChange(val);
-										dispatch({
-											type: "add_tag",
-											payload: val,
-										});
-									}}
+									onValueChange={(val: string[]) =>
+										createTagHandler(field, val)
+									}
 									placeholder="Enter your tags"
 								/>
 							</FormControl>
@@ -288,14 +341,7 @@ export const CreateTaskForm = ({ projectId }: { projectId: string }) => {
 				/>
 				<div className="flex items-center justify-between">
 					<span className="text-sm font-medium">External links</span>
-					<button
-						type="button"
-						onClick={() =>
-							dispatch({
-								type: "add_externalLinkInput",
-							})
-						}
-					>
+					<button type="button" onClick={() => createInputHandler()}>
 						<PlusSquare size={20} />
 					</button>
 				</div>
@@ -311,31 +357,12 @@ export const CreateTaskForm = ({ projectId }: { projectId: string }) => {
 								className="flex-1 outline-none"
 								value={item.value}
 								placeholder="Enter your link here..."
-								onChange={(e) => {
-									const prevValue = [
-										...createTaskState.linksInputs,
-									];
-									prevValue[index].value =
-										e.currentTarget.value;
-									dispatch({
-										type: "add_externalLinkValue",
-										payload: prevValue,
-									});
-								}}
+								onChange={(e) => changeLinkInputValue(e, index)}
 							/>
 							<button
 								type="button"
 								className="mr-4"
-								onClick={() => {
-									const newState = [
-										...createTaskState.linksInputs,
-									];
-									newState.splice(index, 1);
-									dispatch({
-										type: "delete_externalLink",
-										payload: newState,
-									});
-								}}
+								onClick={() => deleteInputHandler(index)}
 							>
 								<Delete size={20} />
 							</button>

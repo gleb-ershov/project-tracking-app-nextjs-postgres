@@ -21,6 +21,7 @@ export const ProjectInfoFull = async (props: IProjectInfoProps) => {
 		props;
 
 	const statusColor = statusColorCreator(status);
+	
 
 	return (
 		<div className="flex w-[90%] mx-auto mt-6 justify-between">
@@ -130,7 +131,7 @@ export const ProjectInfoFull = async (props: IProjectInfoProps) => {
 				</TabsContent>
 				<TabsContent value="activities" className="flex-1">
 					<div className="bg-sidebarL p-2 rounded-lg">
-						<div className="flex flex-col gap-4 overflow-y-auto h-[150px]">
+						<div className="flex flex-col gap-4 overflow-y-auto">
 							{activities.map((item) => (
 								<ProjectActivityCard {...item} key={item.id} />
 							))}

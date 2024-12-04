@@ -13,23 +13,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createNewList } from "@/utils/actions/lists/createNewList";
+import { useParams } from "next/navigation";
 import { useActionState } from "react";
 import { useForm } from "react-hook-form";
 
-export const CreateListForm = ({ projectId }: { projectId: string }) => {
+export const CreateListForm = () => {
 	const { currentUser } = useCurrentUser();
+	const { id: projectId } = useParams<{ id: string }>();
+
 	const [state, action, isPending] = useActionState(
 		createNewList.bind(null, currentUser, projectId),
 		undefined
 	);
-	const form = useForm({
-		defaultValues: {
-			title: "",
-		},
-	});
 
-
-	
+	const form = useForm();
 
 	return (
 		<Form {...form}>
@@ -39,6 +36,7 @@ export const CreateListForm = ({ projectId }: { projectId: string }) => {
 			>
 				<FormField
 					name="title"
+					defaultValue=""
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Title</FormLabel>

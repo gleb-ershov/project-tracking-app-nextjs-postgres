@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { createActivityAction } from "../activities/createNewActivity";
 import { z } from "zod";
 import { required_error, invalid_type_error } from "../../consts";
+import { redirect } from "next/navigation";
 
 export const createNewTaskAction = async (
 	user: { id: string; name: string },
@@ -48,12 +49,11 @@ export const createNewTaskAction = async (
 	});
 
 	if (!zodResult.success) {
-		console.log(zodResult.error.errors);
 		return createError(400, "Bad request", undefined, true);
 	}
-
+	let response;
 	try {
-		const response = await db.task.create({
+		response = await db.task.create({
 			data: {
 				...newTask,
 				tags,
@@ -90,5 +90,9 @@ export const createNewTaskAction = async (
 		};
 	} catch (error) {
 		return createError(500, "Internal Error", error, undefined);
+	} finally {
+		if (response?.id) {
+			redirect(`/projects/${projectId}`);
+		}
 	}
 };

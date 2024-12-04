@@ -1,7 +1,8 @@
-import { getFilteredListsByProject } from "@/utils/data-access/getFilteredListsByProject";
-import { getFilteredTasksByProject } from "@/utils/data-access/getFilteredTasksByProject";
 import { TaskCard } from "./TaskCard";
 import { ListCard } from "./ListCard";
+import { cn } from "@/utils/lib/shadcnUtils";
+import { getFilteredListsByProject } from "@/utils/data-access/getFilteredListsByProject";
+import { getFilteredTasksByProject } from "@/utils/data-access/getFilteredTasksByProject";
 
 export const ProjectItemsList = async ({
 	projectId,
@@ -18,12 +19,14 @@ export const ProjectItemsList = async ({
 		getFilteredListsByProject(projectId, search, sort),
 		getFilteredTasksByProject(projectId, search, sort),
 	]);
-
 	return (
 		<div
-			className={`p-2 bg-sidebarL mx-auto mt-4 w-[95%] flex flex-wrap gap-4 justify-evenly ${
-				display === "list" ? "flex-col" : ""
-			}`}
+			className={cn(
+				"p-2 bg-sidebarL mx-auto mt-4 w-[95%] flex flex-wrap gap-4 justify-evenly",
+				{
+					"flex-col": display === "list",
+				}
+			)}
 		>
 			{lists.status === "fulfilled" && "data" in lists.value
 				? lists.value.data.map((list) => (

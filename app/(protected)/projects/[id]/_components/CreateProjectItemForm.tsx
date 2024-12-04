@@ -2,13 +2,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateTaskForm } from "./CreateTaskForm";
 import { CreateListForm } from "./CreateListForm";
 
-export const CreateProjectItemForm = async ({
-	projectId,
-}: {
-	projectId: string;
-}) => {
+export const CreateProjectItemForm = async () => {
 	return (
-		<Tabs
+		<Tabs	
 			defaultValue="task"
 			className="flex flex-col w-[90%] mx-auto mt-4 max-h-[calc(100%-15%)]"
 		>
@@ -20,13 +16,11 @@ export const CreateProjectItemForm = async ({
 					List
 				</TabsTrigger>
 			</TabsList>
-
 			<TabsContent value="task" className="h-full">
-				<CreateTaskForm projectId={projectId} />
+				<CreateTaskForm />
 			</TabsContent>
-
 			<TabsContent value="list" className="flex-1">
-				<CreateListForm projectId={projectId} />
+				<CreateListForm />
 			</TabsContent>
 		</Tabs>
 	);
